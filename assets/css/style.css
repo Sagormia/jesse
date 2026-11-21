@@ -256,6 +256,9 @@ em {
   background-size: 140px 140px;
   mix-blend-mode: multiply;
 }
+.pt-0 {
+  padding-top: 0 !important;
+}
 .cursor {
   position: fixed;
   top: 0;
@@ -517,7 +520,7 @@ header.is-scrolled .brand__logo img:last-child {
   display: block;
 }
 .brand--footer .brand__logo {
-  width: clamp(190px, 11vw, 215px);
+  width: clamp(194px, 13vw, 245px);
 }
 
 .nav ul {
@@ -677,9 +680,7 @@ header.is-scrolled .brand__logo img:last-child {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 40%;
-  transform: scale(1.06);
-  filter: saturate(0.92);
+  object-position: center center;
 }
 .hero__veil {
   position: absolute;
@@ -697,6 +698,7 @@ header.is-scrolled .brand__logo img:last-child {
       rgba(169, 85, 60, 0.18),
       rgba(0, 0, 0, 0.6) 60%
     );
+    mix-blend-mode: multiply;
 }
 .hero__content {
   padding-top: calc(var(--header-h) + 3rem);
@@ -2400,7 +2402,7 @@ header.is-scrolled .brand__logo img:last-child {
   line-height: 1.4;
   color: rgba(244, 239, 230, 0.85);
   margin-bottom: 1.2rem;
-  max-width: 22ch;
+  max-width: 24ch;
 }
 
 .footer__bottom {
@@ -2961,6 +2963,14 @@ header.is-scrolled .brand__logo img:last-child {
   }
   .about__quote p {
     font-size: 1.15rem;
+  }
+  .footer__top{
+    position: relative;
+  }
+  .footer__top-btn{
+    position: absolute;
+    right: 0;
+    top: 1rem;
   }
 }
 
