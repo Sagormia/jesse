@@ -91,7 +91,24 @@
       <!-- ============ HERO ============ -->
       <section class="hero" id="home">
         <div class="hero__media">
-          <img class="hero__img" id="heroImg" src="assets/img/hero-1200.webp" srcset="assets/img/hero-800.webp 800w, assets/img/hero-1200.webp 1200w" alt="Wedding photography by Jesse Giles Photography in Orlando, Florida" width="1200" height="801" fetchpriority="high" decoding="async">
+          <picture>
+              <source
+                  media="(max-width: 1024px)"
+                  srcset="assets/img/hero-800.webp"
+                  width="800"
+                  height="534"
+              >
+              <img
+                  class="hero__img"
+                  id="heroImg"
+                  src="assets/img/hero-1200.webp"
+                  alt="Wedding photography by Jesse Giles Photography in Orlando, Florida"
+                  width="1200"
+                  height="801"
+                  fetchpriority="high"
+                  decoding="async"
+              >
+          </picture>
           <div class="hero__veil" aria-hidden="true"></div>
         </div>
 
@@ -127,7 +144,7 @@
             <span class="hero__scroll-line" aria-hidden="true"></span>
             Scroll
           </a>
-          <p class="hero__booking"><span class="status-dot" aria-hidden="true"></span> Now booking 2026 – 2027</p>
+          <p class="hero__booking"><span class="status-dot" aria-hidden="true"></span> Now booking 2027-2028</p>
         </div>
       </section>
 
@@ -1126,12 +1143,16 @@
                   <textarea name="message" rows="4" required placeholder="Your story, your guest count, your dream photos — anything helps."></textarea>
                 </label>
 
+                <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+                  <label>Leave this field empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+                </div>
+
                 <div class="form__submit">
                   <button class="btn btn--light btn--submit" type="submit">
                     <span>Send inquiry</span>
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11"/></svg>
                   </button>
-                  <p class="form__note">Opens your email app with everything filled in. Prefer to write directly? <a href="mailto:jessegiles1@gmail.com">jessegiles1@gmail.com</a></p>
+                  <p class="form__note">Jesse replies personally, usually within 24 hours. Prefer to write directly? <a href="mailto:jessegiles1@gmail.com">jessegiles1@gmail.com</a></p>
                 </div>
                 <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
               </form>
@@ -1193,7 +1214,7 @@
           </div>
           <div class="footer__col footer__col--cta">
             <p class="footer__heading">Your date</p>
-            <p>Now booking 2026 – 2027 weddings and portrait sessions.</p>
+            <p>Now booking 2027-2028 weddings and portrait sessions.</p>
             <a class="btn btn--light btn--sm" href="#contact"><span>Book Now</span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11"/></svg></a>
           </div>
         </div>
@@ -1234,6 +1255,7 @@
   <script src="assets/js/vendor/gsap.min.js" defer></script>
   <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
   <script src="assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" defer></script>
   <script src="assets/js/main.js" defer></script>
 </body>
 </html>

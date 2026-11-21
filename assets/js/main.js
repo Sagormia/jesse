@@ -16,9 +16,13 @@
   const hasGSAP = Boolean(window.gsap);
   const hasScrollTrigger = Boolean(window.ScrollTrigger);
 
-  /* Optional: set to a Formspree / Netlify / custom endpoint to POST inquiries.
-     Leave empty to compose the inquiry in the visitor's email app. */
-  const FORM_ENDPOINT = '';
+  /* EmailJS (https://www.emailjs.com/) — paste your keys from the EmailJS dashboard.
+     Account > General > Public Key, Email Services > Service ID,
+     Email Templates > Template ID. See emailjs-templates/README.md.
+     If any value is left empty, the form falls back to the visitor's email app. */
+  const EMAILJS_PUBLIC_KEY = 'ug2TG57IcBobh2wdc';
+  const EMAILJS_SERVICE_ID = 'default_service';
+  const EMAILJS_TEMPLATE_ID = 'template_ev83n0j';        // notification email sent to Jesse
 
   if (hasGSAP && hasScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
@@ -612,31 +616,72 @@
       const data = new FormData(form);
       const get = (key) => String(data.get(key) || '').trim();
 
-      if (FORM_ENDPOINT) {
-        setStatus('Sending your inquiry…');
-        try {
-          const response = await fetch(FORM_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify(Object.fromEntries(data.entries()))
-          });
-          if (!response.ok) throw new Error('Request failed');
-          form.reset();
-          setStatus('Thank you — your inquiry is on its way. Jesse will be in touch soon.');
-        } catch (err) {
-          setStatus('Something went wrong. Please email jessegiles1@gmail.com directly.', true);
-        }
+      // Honeypot: bots fill hidden fields, people don't.
+      if (get('website')) {
+        form.reset();
+        setStatus('Thank you — your inquiry is on its way. Jesse will be in touch soon.');
         return;
       }
 
       const type = get('type') || 'Wedding';
-      const date = get('date');
-      const subject = `Jesse Giles Photography — ${type} inquiry${date ? ' · ' + date : ''}`;
+      const fullName = `${get('firstName')} ${get('lastName')}`.trim();
+      const subject = `Jesse Giles Photography — ${type} inquiry`;
+
+      const emailJsReady = Boolean(
+        window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID
+      );
+
+      if (emailJsReady) {
+        const submitBtn = $('button[type="submit"]', form);
+        const submitLabel = submitBtn ? $('span', submitBtn) : null;
+        const originalLabel = submitLabel ? submitLabel.textContent : '';
+        const setBusy = (busy) => {
+          if (!submitBtn) return;
+          submitBtn.disabled = busy;
+          submitBtn.setAttribute('aria-busy', String(busy));
+          if (submitLabel) submitLabel.textContent = busy ? 'Sending…' : originalLabel;
+        };
+
+        const params = {
+          subject,
+          from_name: fullName,
+          first_name: get('firstName'),
+          last_name: get('lastName'),
+          reply_to: get('email'),
+          email: get('email'),
+          phone: get('phone') || 'Not provided',
+          event_type: type,
+          venue: get('venue') || 'Not provided',
+          message: get('message'),
+          sent_at: new Date().toLocaleString('en-US', {
+            dateStyle: 'full', timeStyle: 'short', timeZone: 'America/New_York'
+          }) + ' ET',
+          year: String(new Date().getFullYear())
+        };
+
+        setBusy(true);
+        setStatus('Sending your inquiry…');
+        try {
+          await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params, {
+            publicKey: EMAILJS_PUBLIC_KEY
+          });
+
+
+          form.reset();
+          setStatus('Thank you — your inquiry is on its way. Jesse will be in touch soon.');
+        } catch (err) {
+          setStatus('Something went wrong. Please try again or email jessegiles1@gmail.com directly.', true);
+        } finally {
+          setBusy(false);
+        }
+        return;
+      }
+
+      // Fallback when EmailJS is not configured: compose in the visitor's email app.
       const lines = [
-        `Name: ${get('firstName')} ${get('lastName')}`,
+        `Name: ${fullName}`,
         `Email: ${get('email')}`,
         `Phone: ${get('phone') || '—'}`,
-        `Event date: ${date || 'Still deciding'}`,
         `Celebrating: ${type}`,
         `Venue or location: ${get('venue') || '—'}`,
         '',
